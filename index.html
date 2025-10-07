@@ -1,58 +1,316 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nghe và Viết Chính Tả: My First Sentences</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
+        :root {
+            --primary-color: #ec407a;
+            --primary-dark: #c2185b;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --light-bg: #fce4ec;
+            --text-color: #333;
+            --white-color: #ffffff;
+            --yellow-color: #ffc107;
+            --topic-color-1: #ef5350;
+            --topic-color-2: #42a5f5;
+            --topic-color-3: #66bb6a;
+            --topic-color-4: #ffa726;
+            --topic-color-5: #ab47bc;
+            --topic-color-6: #78909c;
+        }
+
         body {
             font-family: 'Nunito', sans-serif;
+            background: linear-gradient(120deg, #f8bbd0 0%, #ce93d8 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-color);
             overscroll-behavior: none;
             -webkit-tap-highlight-color: transparent;
         }
-        /* Custom animation for shaking effect */
+
+        #root {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            padding: 25px;
+            max-width: 900px;
+            width: 95%;
+            background: var(--white-color);
+            border-radius: 24px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1), 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        .game-title {
+            font-size: clamp(1.8em, 5vw, 2.5em);
+            color: var(--primary-color);
+            margin: 0 0 5px;
+            font-weight: 700;
+        }
+
+        .game-subtitle {
+            font-size: clamp(1.2em, 4vw, 1.5em);
+            margin-bottom: 20px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .meaning {
+            font-size: clamp(1.1em, 4.5vw, 1.6em);
+            color: var(--primary-dark);
+            margin: 15px 0;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-container {
+            position: relative;
+            margin: 30px 0;
+        }
+
+        #answerInput,
+        .text-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: clamp(1.1em, 4vw, 1.6em);
+            font-family: 'Nunito', sans-serif;
+            border-radius: 12px;
+            border: 3px solid var(--primary-color);
+            box-sizing: border-box;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #answerInput:focus,
+        .text-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.3);
+        }
+
+        #answerInput.correct {
+            border-color: var(--success-color);
+            background-color: #e8f5e9;
+        }
+
+        #answerInput.incorrect {
+            border-color: var(--error-color);
+            animation: shake 0.5s;
+        }
+
+        #hint {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: clamp(1.1em, 4vw, 1.6em);
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 10;
+            width: max-content;
+            max-width: 90%;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-8px); }
             75% { transform: translateX(8px); }
         }
-        .animate-shake {
-            animation: shake 0.5s;
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
         }
-        /* Custom animation for fade-in effect */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        button {
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: clamp(0.9em, 3.5vw, 1.1em);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
+
+        button:hover,
+        button:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        button:disabled {
+            background: #bdbdbd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .score {
+            font-size: clamp(1.1em, 4vw, 1.4em);
+            margin-top: 20px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .message {
+            font-size: clamp(1.1em, 4vw, 1.4em);
+            margin: 15px 0;
+            font-weight: 700;
+            min-height: 25px;
+            color: var(--error-color);
+        }
+
+        .start-screen,
+        .topic-selection-screen,
+        .topic-congrats-screen,
+        .review-errors-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .main-btn,
+        .topic-btn,
+        .congrats-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+        }
+        
+        .topic-btn-container {
+             display: flex;
+             flex-direction: column;
+             width: 100%;
+             align-items: center;
+             gap: 15px;
+        }
+
+        .main-btn { background-color: var(--success-color); }
+        .main-btn:hover { background: #388e3c; }
+        
+        .topic-btn-color-1 { background-color: var(--topic-color-1); }
+        .topic-btn-color-1:hover { background-color: #d32f2f; }
+        .topic-btn-color-2 { background-color: var(--topic-color-2); }
+        .topic-btn-color-2:hover { background-color: #1976d2; }
+        .topic-btn-color-3 { background-color: var(--topic-color-3); }
+        .topic-btn-color-3:hover { background-color: #388e3c; }
+        .topic-btn-color-4 { background-color: var(--topic-color-4); }
+        .topic-btn-color-4:hover { background-color: #f57c00; }
+        .topic-btn-color-5 { background-color: var(--topic-color-5); }
+        .topic-btn-color-5:hover { background-color: #8e24aa; }
+        .topic-btn-color-6 { background-color: var(--topic-color-6); }
+        .topic-btn-color-6:hover { background-color: #546e7a; }
+
+        #playerNameInput {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.2em;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .error-review-list {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-height: 40vh;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .error-review-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+        .error-review-item:last-child {
+            border-bottom: none;
+        }
+        .error-label {
+            font-weight: 700;
+            font-size: 0.9em;
+        }
+        .correct-answer {
+            color: var(--success-color);
+            word-break: break-all;
+        }
+        .user-answer {
+            color: var(--error-color);
+            word-break: break-all;
+        }
+        .error-char {
+            color: #d32f2f;
+            font-weight: bold;
+            text-decoration: underline;
+            background-color: #ffebee;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            button { padding: 10px 20px; }
         }
     </style>
-    <!-- React Libraries -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <!-- Babel for JSX compilation in browser -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body class="bg-gradient-to-br from-pink-100 via-purple-100 to-pink-200">
+
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef, useCallback } = React;
 
-        // --- From types.ts ---
-        const GameState = {
-            START_SCREEN: 0,
-            TOPIC_SELECTION: 1,
-            GAME_SCREEN: 2,
-            CONGRATS_SCREEN: 3,
-        };
-
-        // --- From data/sentences.ts ---
         const allSentences = [
             { en: "What colour is this?", vi: "Cái này màu gì?", emoji: "🎨" },
             { en: "See you later.", vi: "Hẹn gặp lại bạn sau.", emoji: "👋" },
@@ -349,160 +607,203 @@
             { en: "It's a nice puppy.", vi: "Đó là một chú chó con xinh xắn.", emoji: "🐶" }
         ];
 
-        const CHUNK_SIZE = 53;
-
-        const topics = allSentences.reduce((acc, sentence, index) => {
-            const chunkIndex = Math.floor(index / CHUNK_SIZE);
-            const topicName = `Bài Tập IOE K3 - Phần ${chunkIndex + 1}`;
-            if (!acc[topicName]) {
-                acc[topicName] = [];
+        function createTopics(sentences, chunkSize) {
+            const shuffled = [...sentences].sort(() => Math.random() - 0.5);
+            const topics = {};
+            let topicIndex = 1;
+            for (let i = 0; i < shuffled.length; i += chunkSize) {
+                const chunk = shuffled.slice(i, i + chunkSize);
+                topics[`Chủ đề ${topicIndex}`] = chunk;
+                topicIndex++;
             }
-            acc[topicName].push(sentence);
-            return acc;
-        }, {});
+            return topics;
+        }
 
-        // --- From hooks/useSpeechSynthesis.ts ---
-        const useSpeechSynthesis = () => {
+        const topics = createTopics(allSentences, 52);
+        
+        const GameState = {
+            START: 'start',
+            TOPIC_SELECTION: 'topicSelection',
+            GAME: 'game',
+            CONGRATS: 'congrats',
+            REVIEW_ERRORS: 'review',
+        };
+
+        function useSpeechSynthesis() {
             const [isSpeaking, setIsSpeaking] = useState(false);
-            const [supported, setSupported] = useState(false);
+            const synth = window.speechSynthesis;
 
-            useEffect(() => {
-                if ('speechSynthesis' in window) {
-                    setSupported(true);
-                }
-            }, []);
-
-            const speak = useCallback((text, onEndCallback) => {
-                if (!supported || !text) return;
-
-                if (speechSynthesis.speaking) {
-                    speechSynthesis.cancel();
-                }
+            const speak = useCallback((text, options = {}) => {
+                if (!synth) return;
 
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'en-US';
-                utterance.rate = 0.9;
-                
+                utterance.rate = options.rate || 0.9;
                 utterance.onstart = () => setIsSpeaking(true);
                 utterance.onend = () => {
                     setIsSpeaking(false);
-                    if (onEndCallback) onEndCallback();
+                    if (options.onEnd) options.onEnd();
                 };
-                utterance.onerror = (event) => {
-                    console.error('SpeechSynthesis Error:', event.error);
-                    setIsSpeaking(false);
+                utterance.onerror = () => {
+                     setIsSpeaking(false);
                 };
 
-                speechSynthesis.speak(utterance);
-            }, [supported]);
+                // Hủy bỏ lời nói hiện tại trước khi nói lời mới
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+
+                setTimeout(() => synth.speak(utterance), 100);
+
+            }, [synth]);
 
             const cancel = useCallback(() => {
-                if (!supported) return;
-                setIsSpeaking(false);
-                speechSynthesis.cancel();
-            }, [supported]);
+                if (synth) {
+                    synth.cancel();
+                    setIsSpeaking(false);
+                }
+            }, [synth]);
 
-            return { isSpeaking, speak, cancel, supported };
-        };
+            useEffect(() => {
+                return () => cancel();
+            }, [cancel]);
 
-        // --- From components/Fireworks.tsx ---
-        const Fireworks = () => {
+            return { isSpeaking, speak, cancel };
+        }
+
+        function Fireworks() {
             const canvasRef = useRef(null);
             const animationFrameId = useRef(null);
-            const runningRef = useRef(true);
 
             useEffect(() => {
                 const canvas = canvasRef.current;
-                if (!canvas) return;
                 const ctx = canvas.getContext('2d');
-                if (!ctx) return;
-
+                let width = canvas.width = window.innerWidth;
+                let height = canvas.height = window.innerHeight;
                 let fireworks = [];
                 let particles = [];
                 let hue = 120;
-                
-                runningRef.current = true;
 
-                const setCanvasSize = () => {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                };
-                setCanvasSize();
-                window.addEventListener('resize', setCanvasSize);
-
-                const random = (min, max) => Math.random() * (max - min) + min;
-
-                function Particle(x, y, hue) {
-                    this.x = x; this.y = y; this.angle = random(0, Math.PI * 2);
-                    this.speed = random(1, 6); this.vx = Math.cos(this.angle) * this.speed;
-                    this.vy = Math.sin(this.angle) * this.speed; this.hue = hue;
-                    this.alpha = 1; this.decay = random(0.015, 0.03);
-                }
-                Particle.prototype.update = function(index) {
-                    this.x += this.vx; this.y += this.vy; this.alpha -= this.decay;
-                    if (this.alpha <= this.decay) particles.splice(index, 1);
-                };
-                Particle.prototype.draw = function() {
-                    ctx.save(); ctx.globalAlpha = this.alpha; ctx.beginPath();
-                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
-                    ctx.fillStyle = `hsl(${this.hue}, 100%, 50%)`; ctx.fill(); ctx.restore();
-                };
+                function random(min, max) { return Math.random() * (max - min) + min; }
 
                 function Firework(sx, sy, tx, ty) {
-                    this.x = sx; this.y = sy; this.tx = tx; this.ty = ty;
-                    const angle = Math.atan2(ty - sy, tx - sx); this.speed = 2.5; this.acceleration = 1.05;
-                    this.vx = Math.cos(angle) * this.speed; this.vy = Math.sin(angle) * this.speed;
-                    this.hue = hue;
-                }
-                Firework.prototype.update = function(index) {
-                    this.vx *= this.acceleration; this.vy *= this.acceleration;
-                    this.x += this.vx; this.y += this.vy;
-                    if (Math.sqrt(Math.pow(this.tx - this.x, 2) + Math.pow(this.ty - this.y, 2)) <= 5) {
-                        for (let i = 0; i < 40; i++) particles.push(new Particle(this.tx, this.ty, this.hue));
-                        fireworks.splice(index, 1);
+                    this.x = sx; this.y = sy; this.sx = sx; this.sy = sy;
+                    this.tx = tx; this.ty = ty;
+                    this.distanceToTarget = Math.sqrt(Math.pow(tx - sx, 2) + Math.pow(ty - sy, 2));
+                    this.distanceTraveled = 0;
+                    this.coordinates = [];
+                    this.coordinateCount = 3;
+                    while (this.coordinateCount--) {
+                        this.coordinates.push([this.x, this.y]);
                     }
-                };
-                Firework.prototype.draw = function() {
-                    ctx.beginPath(); ctx.moveTo(this.x, this.y);
-                    ctx.lineTo(this.x - this.vx * 4, this.y - this.vy * 4);
-                    ctx.strokeStyle = `hsl(${this.hue}, 100%, 50%)`; ctx.lineWidth = 2; ctx.stroke();
+                    this.angle = Math.atan2(ty - sy, tx - sx);
+                    this.speed = 2;
+                    this.acceleration = 1.05;
+                    this.brightness = random(50, 70);
+                    this.targetRadius = 1;
+                }
+
+                Firework.prototype.update = function (index) {
+                    this.coordinates.pop();
+                    this.coordinates.unshift([this.x, this.y]);
+                    this.speed *= this.acceleration;
+                    const vx = Math.cos(this.angle) * this.speed;
+                    const vy = Math.sin(this.angle) * this.speed;
+                    this.distanceTraveled = Math.sqrt(Math.pow(this.x + vx - this.sx, 2) + Math.pow(this.y + vy - this.sy, 2));
+                    if (this.distanceTraveled >= this.distanceToTarget) {
+                        fireworks.splice(index, 1);
+                        for (let i = 0; i < 30; i++) {
+                            particles.push(new Particle(this.tx, this.ty));
+                        }
+                    } else {
+                        this.x += vx;
+                        this.y += vy;
+                    }
                 };
 
-                const loop = () => {
-                    if (!runningRef.current) {
-                        ctx.clearRect(0, 0, canvas.width, canvas.height); return;
+                Firework.prototype.draw = function () {
+                    ctx.beginPath();
+                    ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                    ctx.lineTo(this.x, this.y);
+                    ctx.strokeStyle = `hsl(${hue}, 100%, ${this.brightness}%)`;
+                    ctx.stroke();
+                };
+
+                function Particle(x, y) {
+                    this.x = x; this.y = y;
+                    this.coordinates = [];
+                    this.coordinateCount = 5;
+                    while (this.coordinateCount--) {
+                        this.coordinates.push([this.x, this.y]);
                     }
+                    this.angle = random(0, Math.PI * 2);
+                    this.speed = random(1, 10);
+                    this.friction = 0.95;
+                    this.gravity = 1;
+                    this.hue = random(hue - 20, hue + 20);
+                    this.brightness = random(50, 80);
+                    this.alpha = 1;
+                    this.decay = random(0.015, 0.03);
+                }
+
+                Particle.prototype.update = function (index) {
+                    this.coordinates.pop();
+                    this.coordinates.unshift([this.x, this.y]);
+                    this.speed *= this.friction;
+                    this.x += Math.cos(this.angle) * this.speed;
+                    this.y += Math.sin(this.angle) * this.speed + this.gravity;
+                    this.alpha -= this.decay;
+                    if (this.alpha <= this.decay) {
+                        particles.splice(index, 1);
+                    }
+                };
+
+                Particle.prototype.draw = function () {
+                    ctx.beginPath();
+                    ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+                    ctx.lineTo(this.x, this.y);
+                    ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
+                    ctx.stroke();
+                };
+
+                function loop() {
                     animationFrameId.current = requestAnimationFrame(loop);
-                    hue += 0.8;
+                    hue += 0.5;
                     ctx.globalCompositeOperation = 'destination-out';
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillRect(0, 0, width, height);
                     ctx.globalCompositeOperation = 'lighter';
-                    if (Math.random() < 0.04) fireworks.push(new Firework(random(0, canvas.width), canvas.height, random(0, canvas.width), random(0, canvas.height / 2)));
+                    if (Math.random() < 0.05) {
+                        fireworks.push(new Firework(width / 2, height, random(0, width), random(0, height / 2)));
+                    }
                     fireworks.forEach((f, i) => { f.update(i); f.draw(); });
                     particles.forEach((p, i) => { p.update(i); p.draw(); });
+                }
+
+                const handleResize = () => {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
                 };
+
+                window.addEventListener('resize', handleResize);
                 loop();
 
                 return () => {
-                    runningRef.current = false;
-                    if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
-                    window.removeEventListener('resize', setCanvasSize);
+                    cancelAnimationFrame(animationFrameId.current);
+                    window.removeEventListener('resize', handleResize);
                 };
             }, []);
 
-            return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none z-50" />;
-        };
+            return <canvas ref={canvasRef}></canvas>;
+        }
 
-        // --- From components/StartScreen.tsx ---
-        const StartScreen = ({ onStart }) => {
-            const [name, setName] = useState('');
+        function StartScreen({ onStart }) {
+            const [playerName, setPlayerName] = useState('');
             const [error, setError] = useState('');
 
             const handleStart = () => {
-                const trimmedName = name.trim();
-                if (trimmedName) {
-                    onStart(trimmedName);
+                if (playerName.trim()) {
+                    onStart(playerName.trim());
                 } else {
                     setError('Vui lòng nhập tên của bạn!');
                     setTimeout(() => setError(''), 3000);
@@ -510,330 +811,334 @@
             };
 
             return (
-                <div className="flex flex-col items-center gap-6 animate-fade-in">
+                <div className="start-screen">
                     <input
                         type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleStart()}
+                        id="playerNameInput"
+                        className="text-input"
                         placeholder="Nhập tên của bạn..."
-                        className="font-sans text-xl placeholder-pink-300 text-center w-full max-w-sm px-4 py-3 bg-white border-2 border-pink-400 rounded-xl shadow-inner focus:outline-none focus:ring-4 focus:ring-pink-300 transition"
-                        autoFocus
+                        value={playerName}
+                        onChange={(e) => setPlayerName(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleStart()}
                     />
-                    <button
-                        onClick={handleStart}
-                        className="w-full max-w-sm px-8 py-4 text-xl font-bold text-white bg-green-500 rounded-xl shadow-lg hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 transform hover:-translate-y-1 transition duration-300"
-                    >
-                        Bắt đầu
-                    </button>
-                    {error && <p className="mt-2 text-red-500 font-semibold">{error}</p>}
+                    <button id="startBtn" className="main-btn" onClick={handleStart}>Bắt đầu</button>
+                    {error && <div className="message">{error}</div>}
                 </div>
             );
-        };
-        
-        // --- From components/TopicSelectionScreen.tsx ---
-        const TopicSelectionScreen = ({ playerName, onSelectTopic }) => {
-            const topicNames = Object.keys(topics);
-            const colors = [
-                'bg-red-400 hover:bg-red-500 focus:ring-red-300', 'bg-blue-400 hover:bg-blue-500 focus:ring-blue-300',
-                'bg-green-400 hover:bg-green-500 focus:ring-green-300', 'bg-orange-400 hover:bg-orange-500 focus:ring-orange-300',
-                'bg-purple-400 hover:bg-purple-500 focus:ring-purple-300', 'bg-teal-400 hover:bg-teal-500 focus:ring-teal-300',
-            ];
+        }
 
+        function TopicSelectionScreen({ onSelectTopic }) {
             return (
-                <div className="w-full flex flex-col items-center gap-4 animate-fade-in">
-                    <h2 className="text-2xl font-bold text-pink-700 mb-4">Chào {playerName}, hãy chọn một chủ đề!</h2>
-                    <div className="w-full max-w-md grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {topicNames.map((topic, index) => (
+                <div className="topic-selection-screen">
+                    <div className="game-subtitle">Chọn một chủ đề để bắt đầu</div>
+                    <div className="topic-btn-container">
+                        {Object.keys(topics).map((topic, index) => (
                             <button
                                 key={topic}
+                                className={`topic-btn topic-btn-color-${(index % 6) + 1}`}
                                 onClick={() => onSelectTopic(topic)}
-                                className={`w-full px-6 py-4 text-lg font-bold text-white rounded-xl shadow-lg transform hover:-translate-y-1 transition duration-300 focus:outline-none focus:ring-4 ${colors[index % colors.length]}`}
                             >
-                                {topic}
+                                {`${topic} (${topics[topic].length} câu)`}
                             </button>
                         ))}
                     </div>
                 </div>
             );
-        };
-
-        // --- From components/CongratsScreen.tsx ---
-        const CongratsScreen = ({ playerName, score, totalSentences, correctlyAnswered, topic, onPlayAgain, onChooseAnotherTopic }) => {
-            return (
-                <React.Fragment>
-                    <Fireworks />
-                    <div className="flex flex-col items-center gap-6 text-center animate-fade-in">
-                        <h2 className="text-3xl font-extrabold text-green-600">
-                            🎉 Chúc mừng <span className="text-pink-500">{playerName}</span>! 🎉
-                        </h2>
-                        <p className="text-xl font-semibold text-gray-700">
-                            Bạn đã hoàn thành chủ đề "{topic}".
-                        </p>
-                        <div className="text-2xl font-bold p-4 bg-pink-100 border-2 border-pink-300 rounded-lg text-pink-800">
-                            Điểm của bạn: <span className="text-4xl">{score}</span>
-                        </div>
-                        <p className="text-lg font-medium text-gray-600">
-                            Hoàn thành đúng: {correctlyAnswered}/{totalSentences} câu.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mt-4">
-                            <button
-                                onClick={onPlayAgain}
-                                className="w-full px-6 py-3 text-lg font-bold text-white bg-blue-500 rounded-xl shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transform hover:-translate-y-1 transition duration-300"
-                            >
-                                Chơi lại chủ đề này
-                            </button>
-                            <button
-                                onClick={onChooseAnotherTopic}
-                                className="w-full px-6 py-3 text-lg font-bold text-white bg-gray-500 rounded-xl shadow-lg hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 transform hover:-translate-y-1 transition duration-300"
-                            >
-                                Chọn chủ đề khác
-                            </button>
-                        </div>
-                    </div>
-                </React.Fragment>
-            );
-        };
+        }
         
-        // --- From components/GameScreen.tsx ---
-        const GameScreen = ({ topic, sentences, onGameEnd, onChooseAnotherTopic }) => {
-            const [currentIndex, setCurrentIndex] = useState(0);
-            const [userInput, setUserInput] = useState('');
-            const [score, setScore] = useState(0);
-            const [completedSentences, setCompletedSentences] = useState(0);
-            const [mistakeCount, setMistakeCount] = useState(0);
-            const [message, setMessage] = useState('');
-            const [messageColor, setMessageColor] = useState('text-red-500');
-            const [isCorrect, setIsCorrect] = useState(null);
-            const [isInputDisabled, setIsInputDisabled] = useState(false);
-            const [hintVisible, setHintVisible] = useState(false);
+        function ReviewErrorsScreen({ errors, onSelectTopic }) {
+            const renderDiff = (correct, user) => {
+                const diff = [];
+                const maxLength = Math.max(correct.length, user.length);
+                for(let i = 0; i < maxLength; i++) {
+                    if (correct[i] !== user[i]) {
+                         diff.push(<span key={i} className="error-char">{user[i] || ''}</span>);
+                    } else {
+                         diff.push(<span key={i}>{user[i]}</span>);
+                    }
+                }
+                return diff;
+            };
 
-            const { speak, cancel: cancelSpeech, isSpeaking } = useSpeechSynthesis();
+            return (
+                <div className="review-errors-screen">
+                     <div className="game-subtitle">Xem lại các câu trả lời sai</div>
+                     <ul className="error-review-list">
+                        {errors.map((error, index) => (
+                            <li key={index} className="error-review-item">
+                                <div className="error-label">Đáp án đúng:</div>
+                                <p className="correct-answer">{error.correctAnswer}</p>
+                                <div className="error-label">Câu trả lời của bạn:</div>
+                                <p className="user-answer">{renderDiff(error.correctAnswer, error.userAnswer)}</p>
+                            </li>
+                        ))}
+                     </ul>
+                     <button className="congrats-btn" style={{backgroundColor: 'var(--primary-color)'}} onClick={onSelectTopic}>
+                        Chọn chủ đề khác
+                     </button>
+                </div>
+            );
+        }
+
+        function CongratsScreen({ score, total, correctCount, playerName, topic, onPlayAgain, onSelectTopic, onReviewErrors, errors }) {
+            return (
+                <div className="topic-congrats-screen">
+                    <div className="message" style={{ color: 'var(--success-color)', fontSize: '1.5em', lineHeight: '1.4' }}>
+                        Chúc mừng <strong>{playerName}</strong>!<br />
+                        Bạn đã đạt {score} điểm, hoàn thành đúng {correctCount}/{total} câu trong "{topic}".
+                    </div>
+                    {errors.length > 0 && (
+                         <button className="congrats-btn" style={{backgroundColor: 'var(--yellow-color)', color: 'var(--text-color)'}} onClick={onReviewErrors}>
+                            Xem lại lỗi sai ({errors.length})
+                         </button>
+                    )}
+                    <button className="congrats-btn" style={{backgroundColor: 'var(--success-color)'}} onClick={onPlayAgain}>Chơi lại chủ đề này</button>
+                    <button className="congrats-btn" style={{backgroundColor: 'var(--primary-dark)'}} onClick={onSelectTopic}>Chọn chủ đề khác</button>
+                    <Fireworks />
+                </div>
+            );
+        }
+
+        function GameScreen({ sentences, onGameEnd, onBackToTopics, topicName }) {
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [score, setScore] = useState(0);
+            const [completed, setCompleted] = useState(0);
+            const [correctCount, setCorrectCount] = useState(0);
+            const [mistakeCount, setMistakeCount] = useState(0);
+            const [userAnswer, setUserAnswer] = useState('');
+            const [message, setMessage] = useState('');
+            const [messageColor, setMessageColor] = useState('var(--error-color)');
+            const [isCorrect, setIsCorrect] = useState(null);
+            const [isLocked, setIsLocked] = useState(false);
+            const [errors, setErrors] = useState([]);
+            
+            const { isSpeaking, speak, cancel } = useSpeechSynthesis();
             const inputRef = useRef(null);
             const nextSentenceTimeoutRef = useRef(null);
-            const audioSequenceTimeoutRef = useRef(null);
 
             const currentSentence = sentences[currentIndex];
 
-            const cancelAllAudio = useCallback(() => {
-                if (audioSequenceTimeoutRef.current) clearTimeout(audioSequenceTimeoutRef.current);
-                audioSequenceTimeoutRef.current = null;
-                cancelSpeech();
-            }, [cancelSpeech]);
-
-            useEffect(() => {
-                if (!currentSentence) return;
-                cancelAllAudio();
-                setIsCorrect(null);
-                setUserInput('');
-                setMessage('');
-                setMistakeCount(0);
-                setIsInputDisabled(false);
-                const startTimeout = setTimeout(() => {
-                    inputRef.current?.focus();
-                    const sentence = currentSentence.en;
-                    speak(sentence, () => {
-                        audioSequenceTimeoutRef.current = setTimeout(() => {
-                            speak(sentence);
-                            audioSequenceTimeoutRef.current = null;
-                        }, 500);
-                    });
-                }, 100);
-                return () => {
-                    clearTimeout(startTimeout);
-                    cancelAllAudio();
-                };
-            }, [currentIndex]);
-
-            const handleNext = () => {
+            const startNewSentence = useCallback((index) => {
+                cancel();
                 if (nextSentenceTimeoutRef.current) clearTimeout(nextSentenceTimeoutRef.current);
-                nextSentenceTimeoutRef.current = window.setTimeout(() => {
-                    const newCompletedCount = completedSentences + 1;
-                    if (newCompletedCount >= sentences.length) {
-                        setCompletedSentences(newCompletedCount);
-                        onGameEnd(score, score / 10);
-                    } else {
-                        setCompletedSentences(newCompletedCount);
-                        setCurrentIndex(prev => (prev + 1) % sentences.length);
+
+                if (index >= sentences.length) {
+                    onGameEnd({ score, completed, correctCount, errors });
+                    return;
+                }
+                
+                setCurrentIndex(index);
+                setUserAnswer('');
+                setMistakeCount(0);
+                setMessage('');
+                setIsCorrect(null);
+                setIsLocked(false);
+                inputRef.current?.focus();
+                
+                const sentenceToSpeak = sentences[index].en;
+                // Play twice
+                speak(sentenceToSpeak, { onEnd: () => {
+                    if (!isSpeaking) { // Avoid re-speaking if interrupted
+                         speak(sentenceToSpeak);
                     }
-                }, isCorrect ? 2000 : 3500);
-            };
-          
+                }});
+
+            }, [sentences, onGameEnd, score, completed, correctCount, errors, cancel, speak, isSpeaking]);
+            
+            useEffect(() => {
+                startNewSentence(0);
+                return () => {
+                    cancel();
+                    if (nextSentenceTimeoutRef.current) clearTimeout(nextSentenceTimeoutRef.current);
+                };
+            }, [sentences]); // Only re-run when sentences array changes (i.e., new topic)
+
             const handleCheckAnswer = () => {
-                if (isInputDisabled) return;
-                const userAnswerTrimmed = userInput.trim();
+                if (isLocked) return;
+                
+                const cleanedUserAnswer = userAnswer.trim();
                 const correctAnswer = currentSentence.en;
 
-                if (userAnswerTrimmed === correctAnswer) {
-                    cancelAllAudio();
-                    speak(correctAnswer);
-                    setMessage('Chính xác! +10 điểm.');
-                    setMessageColor('text-green-600');
+                if (cleanedUserAnswer === correctAnswer) {
                     setIsCorrect(true);
-                    setIsInputDisabled(true);
-                    if (mistakeCount < 3) setScore(s => s + 10);
-                    handleNext();
+                    setIsLocked(true);
+                    setMessage('Chính xác! +10 điểm.');
+                    setMessageColor('var(--success-color)');
+                    setScore(prev => prev + 10);
+                    setCorrectCount(prev => prev + 1);
+                    setCompleted(prev => prev + 1);
+                    cancel();
+                    speak(correctAnswer, { onEnd: () => {
+                        nextSentenceTimeoutRef.current = setTimeout(() => startNewSentence(currentIndex + 1), 2000);
+                    }});
                 } else {
                     const newMistakeCount = mistakeCount + 1;
                     setMistakeCount(newMistakeCount);
                     setIsCorrect(false);
-                    setTimeout(() => setIsCorrect(null), 500);
+                    
                     if (newMistakeCount >= 3) {
-                        cancelAllAudio();
-                        setMessage(`Bạn đã sai 3 lần. Đáp án đúng: "${correctAnswer}"`);
-                        setMessageColor('text-red-500');
-                        setIsInputDisabled(true);
-                        handleNext();
+                        setIsLocked(true);
+                        setMessage(`Bạn đã sai 3 lần. Đáp án: "${correctAnswer}"`);
+                        setErrors(prev => [...prev, { correctAnswer, userAnswer: cleanedUserAnswer }]);
+                        setCompleted(prev => prev + 1);
+                        cancel();
+                        nextSentenceTimeoutRef.current = setTimeout(() => startNewSentence(currentIndex + 1), 3500);
                     } else {
                         setMessage(`Sai rồi! (Số lần sai: ${newMistakeCount}/3)`);
-                        setMessageColor('text-yellow-600');
+                        setTimeout(() => setIsCorrect(null), 500);
                     }
                 }
             };
-          
+            
             const handleListenAgain = () => {
-                if (isSpeaking) return;
-                cancelAllAudio();
-                speak(currentSentence.en);
+                if (!isSpeaking) {
+                    speak(currentSentence.en);
+                }
             };
 
-            const getInputClassName = () => {
-                let base = "w-full p-4 text-center text-xl sm:text-2xl font-sans rounded-xl border-4 transition duration-300 focus:outline-none focus:ring-4";
-                if (isCorrect === true) return `${base} bg-green-100 border-green-500 focus:ring-green-300`;
-                if (isCorrect === false) return `${base} bg-red-100 border-red-500 focus:ring-red-300 animate-shake`;
-                return `${base} bg-white border-pink-400 focus:ring-pink-300`;
+            const hintRef = useRef(null);
+
+            const showHint = () => {
+                if(hintRef.current) hintRef.current.style.display = 'block';
             };
-          
-            if (!currentSentence) return null;
+            const hideHint = () => {
+                if(hintRef.current) hintRef.current.style.display = 'none';
+            };
+
+
+            if (!currentSentence) return <div>Đang tải...</div>;
 
             return (
-                <div className="w-full flex flex-col items-center gap-4 animate-fade-in">
-                    <div className="w-full text-center mb-2">
-                        <p className="text-lg font-bold text-pink-700">{topic}</p>
-                        <p className="text-2xl font-bold text-gray-800">{`Điểm: ${score} | Hoàn thành: ${completedSentences}/${sentences.length}`}</p>
-                    </div>
-                    <div className="text-2xl sm:text-3xl font-bold text-pink-800 italic flex items-center justify-center gap-3 p-4 bg-pink-50 rounded-lg w-full">
+                <div className="game-screen">
+                    <div className="game-subtitle">Chủ đề: {topicName}</div>
+                    <div className="meaning">
                         <span>&ldquo;{currentSentence.vi}&rdquo;</span>
-                        <span className="text-4xl">{currentSentence.emoji}</span>
+                        <span>{currentSentence.emoji}</span>
                     </div>
-                    <div className="w-full relative">
+                    <div className="input-container">
                         <input
-                            ref={inputRef} type="text" value={userInput}
-                            onChange={(e) => setUserInput(e.target.value)}
+                            ref={inputRef}
+                            type="text"
+                            id="answerInput"
+                            placeholder="Nhập câu bạn nghe được..."
+                            autoComplete="off"
+                            autoCorrect="off"
+                            autoCapitalize="off"
+                            spellCheck="false"
+                            value={userAnswer}
+                            onChange={(e) => setUserAnswer(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleCheckAnswer()}
-                            placeholder="Nhập câu bạn nghe được..." className={getInputClassName()}
-                            disabled={isInputDisabled} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+                            disabled={isLocked}
+                            className={`${isCorrect === true ? 'correct' : ''} ${isCorrect === false ? 'incorrect' : ''}`}
                         />
-                        {hintVisible && (
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-800 text-white text-lg p-3 rounded-md pointer-events-none w-max max-w-full">
-                                {currentSentence.en}
-                            </div>
-                        )}
+                        <div id="hint" ref={hintRef}>{currentSentence.en}</div>
                     </div>
-                    <div className={`min-h-[2rem] text-lg font-bold ${messageColor}`}>{message}</div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-2xl">
-                        <button onClick={handleListenAgain} disabled={isSpeaking} className="px-4 py-3 text-md font-bold text-white bg-pink-500 rounded-xl shadow-lg hover:bg-pink-600 focus:outline-none focus:ring-4 focus:ring-pink-300 transform hover:-translate-y-1 transition duration-300 disabled:bg-pink-300 disabled:transform-none">
-                            Nghe lại
-                        </button>
-                        <button onClick={handleCheckAnswer} disabled={isInputDisabled} className="px-4 py-3 text-md font-bold text-white bg-green-500 rounded-xl shadow-lg hover:bg-green-600 focus:outline-none focus:ring-4 focus:ring-green-300 transform hover:-translate-y-1 transition duration-300 disabled:bg-gray-400 disabled:transform-none">
-                            Kiểm tra
-                        </button>
-                        <button
-                            onMouseDown={() => setHintVisible(true)} onMouseUp={() => setHintVisible(false)}
-                            onMouseLeave={() => setHintVisible(false)} onTouchStart={(e) => { e.preventDefault(); setHintVisible(true); }}
-                            onTouchEnd={() => setHintVisible(false)} disabled={isInputDisabled}
-                            className="px-4 py-3 text-md font-bold text-gray-800 bg-amber-400 rounded-xl shadow-lg hover:bg-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-300 transform hover:-translate-y-1 transition duration-300 disabled:bg-gray-400 disabled:transform-none"
+                    <div className="message" style={{ color: messageColor }}>{message}</div>
+                    <div className="buttons">
+                        <button id="listenAgainBtn" onClick={handleListenAgain} disabled={isSpeaking || isLocked}>Nghe lại</button>
+                        <button id="checkBtn" onClick={handleCheckAnswer} disabled={isLocked}>Kiểm tra</button>
+                         <button 
+                            id="hintBtn" 
+                            disabled={isLocked}
+                            onMouseDown={showHint}
+                            onMouseUp={hideHint}
+                            onMouseLeave={hideHint}
+                            onTouchStart={(e) => { e.preventDefault(); showHint(); }}
+                            onTouchEnd={hideHint}
+                            style={{backgroundColor: 'var(--yellow-color)', color: 'var(--text-color)'}}
                         >
                             Gợi ý
                         </button>
-                        <button onClick={onChooseAnotherTopic} className="px-4 py-3 text-md font-bold text-white bg-gray-500 rounded-xl shadow-lg hover:bg-gray-600 focus:outline-none focus:ring-4 focus:ring-gray-300 transform hover:-translate-y-1 transition duration-300">
-                            Chủ đề khác
-                        </button>
+                        <button id="resetBtn" onClick={onBackToTopics} style={{backgroundColor: '#757575'}}>Chủ đề khác</button>
                     </div>
+                    <div className="score">Điểm: {score} | Hoàn thành: {completed}/{sentences.length}</div>
                 </div>
             );
-        };
+        }
 
-        // --- From App.tsx ---
-        const App = () => {
-            const [gameState, setGameState] = useState(GameState.START_SCREEN);
+        function App() {
+            const [gameState, setGameState] = useState(GameState.START);
             const [playerName, setPlayerName] = useState('');
-            const [selectedTopic, setSelectedTopic] = useState('');
-            const [lastGameResult, setLastGameResult] = useState({ score: 0, correctlyAnswered: 0 });
-            const [shuffledSentences, setShuffledSentences] = useState([]);
+            const [currentTopic, setCurrentTopic] = useState(null);
+            const [gameResult, setGameResult] = useState({ score: 0, total: 0, correctCount: 0, errors: [] });
+            
+            const { cancel: cancelSpeech } = useSpeechSynthesis();
 
-            const handleStartGame = (name) => {
+            const handleStart = (name) => {
                 setPlayerName(name);
                 setGameState(GameState.TOPIC_SELECTION);
             };
 
             const handleSelectTopic = (topic) => {
-                setSelectedTopic(topic);
-                setShuffledSentences([...topics[topic]].sort(() => Math.random() - 0.5));
-                setGameState(GameState.GAME_SCREEN);
+                setCurrentTopic(topic);
+                setGameState(GameState.GAME);
             };
-          
-            const handleGoToTopicSelection = useCallback(() => {
+            
+            const handleBackToTopics = () => {
+                cancelSpeech();
                 setGameState(GameState.TOPIC_SELECTION);
-            }, []);
-
-            const handleGameEnd = (score, correctlyAnswered) => {
-                setLastGameResult({ score, correctlyAnswered });
-                setGameState(GameState.CONGRATS_SCREEN);
             };
 
+            const handleGameEnd = (result) => {
+                setGameResult({
+                     score: result.score, 
+                     total: topics[currentTopic].length,
+                     correctCount: result.correctCount,
+                     errors: result.errors
+                });
+                setGameState(GameState.CONGRATS);
+            };
+            
             const handlePlayAgain = () => {
-                setShuffledSentences([...topics[selectedTopic]].sort(() => Math.random() - 0.5));
-                setGameState(GameState.GAME_SCREEN);
+                setGameState(GameState.GAME);
+            };
+            
+            const handleReviewErrors = () => {
+                setGameState(GameState.REVIEW_ERRORS);
             };
 
-            const renderContent = () => {
+            const renderScreen = () => {
                 switch (gameState) {
-                    case GameState.START_SCREEN:
-                        return <StartScreen onStart={handleStartGame} />;
+                    case GameState.START:
+                        return <StartScreen onStart={handleStart} />;
                     case GameState.TOPIC_SELECTION:
-                        return <TopicSelectionScreen playerName={playerName} onSelectTopic={handleSelectTopic} />;
-                    case GameState.GAME_SCREEN:
-                        return <GameScreen
-                                topic={selectedTopic}
-                                sentences={shuffledSentences}
-                                onGameEnd={handleGameEnd}
-                                onChooseAnotherTopic={handleGoToTopicSelection}
-                            />;
-                    case GameState.CONGRATS_SCREEN:
-                        return <CongratsScreen
-                                playerName={playerName}
-                                score={lastGameResult.score}
-                                correctlyAnswered={lastGameResult.correctlyAnswered}
-                                totalSentences={topics[selectedTopic].length}
-                                topic={selectedTopic}
-                                onPlayAgain={handlePlayAgain}
-                                onChooseAnotherTopic={handleGoToTopicSelection}
-                            />;
+                        return <TopicSelectionScreen onSelectTopic={handleSelectTopic} />;
+                    case GameState.GAME:
+                        return <GameScreen 
+                                    sentences={topics[currentTopic]}
+                                    topicName={currentTopic} 
+                                    onGameEnd={handleGameEnd} 
+                                    onBackToTopics={handleBackToTopics} 
+                                />;
+                    case GameState.CONGRATS:
+                        return <CongratsScreen 
+                                    {...gameResult} 
+                                    playerName={playerName} 
+                                    topic={currentTopic}
+                                    onPlayAgain={handlePlayAgain}
+                                    onSelectTopic={handleBackToTopics}
+                                    onReviewErrors={handleReviewErrors}
+                                />;
+                    case GameState.REVIEW_ERRORS:
+                        return <ReviewErrorsScreen 
+                                    errors={gameResult.errors} 
+                                    onSelectTopic={handleBackToTopics}
+                               />
                     default:
-                        return <StartScreen onStart={handleStartGame} />;
+                        return <StartScreen onStart={handleStart} />;
                 }
             };
 
             return (
-                <div className="min-h-screen w-full flex justify-center items-center p-4">
-                    <main className="container mx-auto max-w-4xl w-full bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-8 text-center">
-                        <h1 className="text-4xl sm:text-5xl font-extrabold text-pink-500 tracking-tight">
-                            NGHE VÀ VIẾT CHÍNH TẢ
-                        </h1>
-                        <p className="text-xl sm:text-2xl text-gray-600 font-semibold mb-8">
-                            (Dictation Practice)
-                        </p>
-                        {renderContent()}
-                    </main>
+                <div className="container">
+                    <div className="game-title">NGHE VÀ VIẾT CHÍNH TẢ</div>
+                    {renderScreen()}
                 </div>
             );
-        };
+        }
 
-        // --- Render the App ---
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-
+        ReactDOM.render(<App />, document.getElementById('root'));
     </script>
 </body>
+
 </html>
